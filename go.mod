@@ -29,7 +29,7 @@ replace github.com/prometheus/prometheus => github.com/prometheus/prometheus v0.
 require (
 	cloud.google.com/go/storage v1.28.1
 	cuelang.org/go v0.5.0
-	github.com/Azure/azure-sdk-for-go v65.0.0+incompatible
+	github.com/Azure/azure-sdk-for-go v68.0.0+incompatible
 	github.com/Azure/go-autorest/autorest v0.11.28
 	github.com/BurntSushi/toml v1.2.1
 	github.com/Masterminds/semver v1.5.0
