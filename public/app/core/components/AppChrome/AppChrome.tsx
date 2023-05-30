@@ -1,6 +1,7 @@
 import { css, cx } from '@emotion/css';
 import classNames from 'classnames';
 import React, { PropsWithChildren } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import { GrafanaTheme2, PageLayoutType } from '@grafana/data';
 import { useStyles2, LinkButton } from '@grafana/ui';
@@ -20,13 +21,19 @@ export function AppChrome({ children }: Props) {
   const styles = useStyles2(getStyles);
   const { chrome } = useGrafana();
   const state = chrome.useState();
+  // let [searchParams] = useSearchParams();
+  const search = useLocation().search;
+  const searchParams = new URLSearchParams(search);
 
-  const searchBarHidden = state.searchBarHidden || state.kioskMode === KioskMode.TV;
+  console.log({ searchParams, search });
+  const isEmbedded = searchParams.get('embedded') !== null;
+  const searchBarHidden = state.searchBarHidden || state.kioskMode === KioskMode.TV || isEmbedded;
 
   const contentClass = cx({
     [styles.content]: true,
     [styles.contentNoSearchBar]: searchBarHidden,
     [styles.contentChromeless]: state.chromeless,
+    [styles.contentEmbedded]: isEmbedded,
   });
 
   // Chromeless routes are without topNav, mega menu, search & command palette
@@ -42,15 +49,17 @@ export function AppChrome({ children }: Props) {
           </LinkButton>
           <div className={cx(styles.topNav)}>
             {!searchBarHidden && <TopSearchBar />}
-            <NavToolbar
-              searchBarHidden={searchBarHidden}
-              sectionNav={state.sectionNav.node}
-              pageNav={state.pageNav}
-              actions={state.actions}
-              onToggleSearchBar={chrome.onToggleSearchBar}
-              onToggleMegaMenu={chrome.onToggleMegaMenu}
-              onToggleKioskMode={chrome.onToggleKioskMode}
-            />
+            {!isEmbedded && (
+              <NavToolbar
+                searchBarHidden={searchBarHidden}
+                sectionNav={state.sectionNav.node}
+                pageNav={state.pageNav}
+                actions={state.actions}
+                onToggleSearchBar={chrome.onToggleSearchBar}
+                onToggleMegaMenu={chrome.onToggleMegaMenu}
+                onToggleKioskMode={chrome.onToggleKioskMode}
+              />
+            )}
           </div>
         </>
       )}
@@ -63,7 +72,7 @@ export function AppChrome({ children }: Props) {
       {!state.chromeless && (
         <>
           <MegaMenu searchBarHidden={searchBarHidden} onClose={() => chrome.setMegaMenu(false)} />
-          <CommandPalette />
+          {!isEmbedded && <CommandPalette />}
         </>
       )}
     </div>
@@ -82,6 +91,9 @@ const getStyles = (theme: GrafanaTheme2) => {
       paddingTop: TOP_BAR_LEVEL_HEIGHT * 2,
       flexGrow: 1,
       height: '100%',
+    }),
+    contentEmbedded: css({
+      paddingTop: 0,
     }),
     contentNoSearchBar: css({
       paddingTop: TOP_BAR_LEVEL_HEIGHT,
