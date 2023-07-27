@@ -26,11 +26,8 @@ export function AppChrome({ children }: Props) {
   const searchParams = new URLSearchParams(search);
   const isEmbedded = searchParams.get('embedded') !== null;
   if (isEmbedded) {
-    const grafanaFilterChangeEvent = new CustomEvent('grafanaFilterChangeEvent', {
-      bubbles: true,
-      detail: { searchParams, search },
-    });
-    parent.document.dispatchEvent(grafanaFilterChangeEvent);
+    const message = { searchParams, search };
+    window.parent?.postMessage(message, '*');
   }
   console.log(search);
   const searchBarHidden = state.searchBarHidden || state.kioskMode === KioskMode.TV || isEmbedded;
