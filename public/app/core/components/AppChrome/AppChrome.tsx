@@ -24,9 +24,12 @@ export function AppChrome({ children }: Props) {
   // let [searchParams] = useSearchParams();
   const search = useLocation().search;
   const searchParams = new URLSearchParams(search);
-
-  console.log({ searchParams, search });
   const isEmbedded = searchParams.get('embedded') !== null;
+  const grafanaEvent = new CustomEvent('grafanaEvent', {
+    bubbles: true,
+    detail: { searchParams, search },
+  });
+  window.dispatchEvent(grafanaEvent);
   const searchBarHidden = state.searchBarHidden || state.kioskMode === KioskMode.TV || isEmbedded;
 
   const contentClass = cx({
