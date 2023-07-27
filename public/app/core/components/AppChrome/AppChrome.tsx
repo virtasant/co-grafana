@@ -25,11 +25,13 @@ export function AppChrome({ children }: Props) {
   const search = useLocation().search;
   const searchParams = new URLSearchParams(search);
   const isEmbedded = searchParams.get('embedded') !== null;
-  const grafanaEvent = new CustomEvent('grafanaEvent', {
-    bubbles: true,
-    detail: { searchParams, search },
-  });
-  window.dispatchEvent(grafanaEvent);
+  if (isEmbedded) {
+    const grafanaFilterChangeEvent = new CustomEvent('grafanaFilterChangeEvent', {
+      bubbles: true,
+      detail: { searchParams, search },
+    });
+    window.dispatchEvent(grafanaFilterChangeEvent);
+  }
   const searchBarHidden = state.searchBarHidden || state.kioskMode === KioskMode.TV || isEmbedded;
 
   const contentClass = cx({
