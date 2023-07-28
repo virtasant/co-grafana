@@ -26,7 +26,8 @@ export function AppChrome({ children }: Props) {
   const searchParams = new URLSearchParams(search);
   const isEmbedded = searchParams.get('embedded') !== null;
   if (isEmbedded) {
-    const message = { searchParams, search };
+    const searchData = { searchParams, search };
+    const message = JSON.parse(JSON.stringify(searchData));
     window.parent?.postMessage(message, '*');
   }
   console.log(search);
