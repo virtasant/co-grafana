@@ -3,6 +3,7 @@
 grafanaPipeline {
     publish = true
     deploy = true
+    prNode = 'dev-dp-node'
     devNode = 'dev-dp-node'
     buildParameters = ' --platform linux/amd64 \
     --build-arg BINGO=false \
